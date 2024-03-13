@@ -4,14 +4,16 @@ import jieba
 import jieba.analyse  
 from sklearn.feature_extraction.text import TfidfVectorizer  
 from sklearn.metrics.pairwise import cosine_similarity  
-  
+import re
+
 
 stopwords = set(['的', '了', '在', '是', '我', '你', '有', '和', '很', '不', '一个', '上', '也', '就', '要', '都', '到', '说', '...', '’','。'])
 
 # 文本预处理函数  
 def preprocess_text(text):  
+    text = deletepunct(text)
     words = jieba.cut(text)  
-    filtered_words = [word for word in words if word not in stopwords]  
+    filtered_words = [word for word in words]  
     return ' '.join(filtered_words)  
   
 # 计算TF-IDF向量  
@@ -60,11 +62,31 @@ def yuxuan(original_txt, plagiarized_txt):
     # 计算相似度  
     return compute_cosine_similarity(tfidf_matrix, 0, 1)  
 
+def deletepunct(text):
+    # 使用正则表达式删除符号
+    return re.sub(r'[\n\s\.,.，。、’“”:：;!！?？()（）"\'\-]', "", text)
+
 if __name__ == '__main__':
 
-    original_txt,plagiarized_txt,result_path = check_command(sys.argv)
+    # original_txt,plagiarized_txt,result_path = check_command(sys.argv)
+    original_path = './orig.txt'
+    try:
+        with open(original_path, 'r',encoding='utf-8') as f:
+            original_txt = f.read()
+    except FileNotFoundError as e:
+        raise e("ERROR: original_path not found!")
+    plagiarized_path = './orig_0.8_add.txt'
+    try:    
+        with open(plagiarized_path, 'r',encoding='utf-8') as f:
+            plagiarized_txt = f.read()
+    except FileNotFoundError as e:
+        raise e("ERROR: plagiarized_path not found!")
     
-    print("文本相似度: %.2f"%(yuxuan(original_txt,plagiarized_txt)*100))
+    
+    original_txt = preprocess_text(original_txt)
+    print(original_txt[:100])
+    plagiarized_txt = preprocess_text(plagiarized_txt)
+    # print("文本相似度: %.2f"%(yuxuan(original_txt,plagiarized_txt)*100))
 
     # # print(f"len(original_txt): {len(original_txt)}")
     # # print(f"len(plagiarized_txt): {len(plagiarized_txt)}")
