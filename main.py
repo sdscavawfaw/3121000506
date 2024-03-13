@@ -6,7 +6,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity  
   
 
-stopwords = set(['的', '了', '在', '是', '我', '有', '和', '很', '不', '一个', '上', '也', '就', '要', '都', '到', '说', '...', '’','。'])
+stopwords = set(['的', '了', '在', '是', '我', '你', '有', '和', '很', '不', '一个', '上', '也', '就', '要', '都', '到', '说', '...', '’','。'])
 
 # 文本预处理函数  
 def preprocess_text(text):  
