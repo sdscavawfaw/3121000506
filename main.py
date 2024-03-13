@@ -6,12 +6,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity  
 import re
 
-
+STOP_WORDS = ['的', '了']
 # 文本预处理函数  
 def preprocess_text(text):  
-    text = deletepunct(text)
+    text = delete_punct(text)
     words = jieba.cut(text)  
-    filtered_words = [word for word in words]  
+    filtered_words = [word for word in words if word not in STOP_WORDS]
     return ' '.join(filtered_words)  
   
 # 计算TF-IDF向量  
@@ -27,7 +27,7 @@ def compute_cosine_similarity(tfidf_matrix, index1, index2):
 
 def check_command(argv):
     """
-    检查命令行文件路径数量是否正确并检查两个待检测的文件是否存在，保存结果的文件夹是否存在。
+    检查命令行文件路径数量是否正确并检查两个待检测的文件是否存在，保存结果的目录路径夹是否存在。
     """
     if len(argv) != 4:
         raise ValueError("parameter error!")
@@ -39,13 +39,13 @@ def check_command(argv):
     try:
         with open(original_path, 'r',encoding='utf-8') as f:
             original_txt = f.read()
-    except FileNotFoundError as e:
+    except FileNotFoundError :
         raise"ERROR: original_path not found!"
 
     try:    
         with open(plagiarized_path, 'r',encoding='utf-8') as f:
             plagiarized_txt = f.read()
-    except FileNotFoundError as e:
+    except FileNotFoundError :
         raise"ERROR: plagiarized_path not found!"
 
     result_file,_ = os.path.split(result_path)
@@ -55,31 +55,27 @@ def check_command(argv):
     return original_txt,plagiarized_txt,result_path
 
 def get_duplicate_checking(original_txt, plagiarized_txt):
-    tfidf_matrix, vectorizer = compute_tfidf_vectors([original_txt, plagiarized_txt])  
+    tfidf_matrix, _ = compute_tfidf_vectors([original_txt, plagiarized_txt])
     
     # 计算相似度  
     return compute_cosine_similarity(tfidf_matrix, 0, 1)  
 
-def deletepunct(text):
+def delete_punct(text):
     # 使用正则表达式删除符号
-    return re.sub(r'[\n\s\.,.，。、’“”:：;!！?？()（）"\'\-]', "", text)
+    return re.sub(r'[\n\s,.，。、’“”:：;!！?？()（）"\'\-]', "", text)
 
-if __name__ == '__main__':
-    # 检查命令行是否输入正确
-    original_txt,plagiarized_txt,result_path= check_command(argv=sys.argv)
+def main():
+    original_txt, plagiarized_txt, result_path = check_command(argv=sys.argv)
     original_txt = preprocess_text(original_txt)
     plagiarized_txt = preprocess_text(plagiarized_txt)
 
-    result = get_duplicate_checking(original_txt,plagiarized_txt)*100
+    result = get_duplicate_checking(original_txt, plagiarized_txt) * 100
     print(f"文本相似度: {result}")
-    with open(result_path, 'w',encoding='utf-8') as f:
+    with open(result_path, 'w', encoding='utf-8') as f:
         f.write(f"{sys.argv[2]}的查重率为：{result}%")
-    # # print(f"len(original_txt): {len(original_txt)}")
-    # # print(f"len(plagiarized_txt): {len(plagiarized_txt)}")
-    # print(f"type(original_txt): {type(original_txt)}")
-    # print(f"type(plagiarized_txt): {type(plagiarized_txt)}")
-    # print(original_txt[:20])
-    # print(plagiarized_txt[:20])
+
+if __name__ == '__main__':
+    main()
 
   
 
