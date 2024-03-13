@@ -7,8 +7,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 import re
 
 
-stopwords = set(['的', '了', '在', '是', '我', '你', '有', '和', '很', '不', '一个', '上', '也', '就', '要', '都', '到', '说', '...', '’','。'])
-
 # 文本预处理函数  
 def preprocess_text(text):  
     text = deletepunct(text)
@@ -42,13 +40,13 @@ def check_command(argv):
         with open(original_path, 'r',encoding='utf-8') as f:
             original_txt = f.read()
     except FileNotFoundError as e:
-        raise e("ERROR: original_path not found!")
+        raise"ERROR: original_path not found!"
 
     try:    
         with open(plagiarized_path, 'r',encoding='utf-8') as f:
             plagiarized_txt = f.read()
     except FileNotFoundError as e:
-        raise e("ERROR: plagiarized_path not found!")
+        raise"ERROR: plagiarized_path not found!"
 
     result_file,_ = os.path.split(result_path)
     if not os.path.isdir(result_file):
@@ -56,7 +54,7 @@ def check_command(argv):
     
     return original_txt,plagiarized_txt,result_path
 
-def yuxuan(original_txt, plagiarized_txt):
+def get_duplicate_checking(original_txt, plagiarized_txt):
     tfidf_matrix, vectorizer = compute_tfidf_vectors([original_txt, plagiarized_txt])  
     
     # 计算相似度  
@@ -67,27 +65,15 @@ def deletepunct(text):
     return re.sub(r'[\n\s\.,.，。、’“”:：;!！?？()（）"\'\-]', "", text)
 
 if __name__ == '__main__':
-
-    # original_txt,plagiarized_txt,result_path = check_command(sys.argv)
-    original_path = './orig.txt'
-    try:
-        with open(original_path, 'r',encoding='utf-8') as f:
-            original_txt = f.read()
-    except FileNotFoundError as e:
-        raise e("ERROR: original_path not found!")
-    plagiarized_path = './orig_0.8_add.txt'
-    try:    
-        with open(plagiarized_path, 'r',encoding='utf-8') as f:
-            plagiarized_txt = f.read()
-    except FileNotFoundError as e:
-        raise e("ERROR: plagiarized_path not found!")
-    
-    
+    # 检查命令行是否输入正确
+    original_txt,plagiarized_txt,result_path= check_command(argv=sys.argv)
     original_txt = preprocess_text(original_txt)
-    print(original_txt[:100])
     plagiarized_txt = preprocess_text(plagiarized_txt)
-    # print("文本相似度: %.2f"%(yuxuan(original_txt,plagiarized_txt)*100))
 
+    result = get_duplicate_checking(original_txt,plagiarized_txt)*100
+    print(f"文本相似度: {result}")
+    with open(result_path, 'w',encoding='utf-8') as f:
+        f.write(f"{sys.argv[2]}的查重率为：{result}%")
     # # print(f"len(original_txt): {len(original_txt)}")
     # # print(f"len(plagiarized_txt): {len(plagiarized_txt)}")
     # print(f"type(original_txt): {type(original_txt)}")
