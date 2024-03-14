@@ -6,8 +6,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity  
 import re
 
-STOP_WORDS = ['我','的', '了']
-# 文本预处理函数  
+STOP_WORDS = ['的', '了'] # 停用词处理
+# 文本预处理函数
 def preprocess_text(text):  
     text = delete_punct(text)
     words = jieba.cut(text)  
@@ -54,14 +54,15 @@ def check_command(argv):
     
     return original_txt,plagiarized_txt,result_path
 
+# 计算查重率的总接口
 def get_duplicate_checking(original_txt, plagiarized_txt):
     tfidf_matrix, _ = compute_tfidf_vectors([original_txt, plagiarized_txt])
     
     # 计算相似度  
     return compute_cosine_similarity(tfidf_matrix, 0, 1)  
 
+# 使用正则表达式删除符号
 def delete_punct(text):
-    # 使用正则表达式删除符号
     return re.sub(r'[\n\s,.，。、’“”:：;!！?？()（）"\'\-]', "", text)
 
 def main():
@@ -69,7 +70,7 @@ def main():
     original_txt = preprocess_text(original_txt)
     plagiarized_txt = preprocess_text(plagiarized_txt)
 
-    result = get_duplicate_checking(original_txt, plagiarized_txt) * 100
+    result = '%.2f'% (get_duplicate_checking(original_txt, plagiarized_txt) * 100)
     print(f"文本相似度: {result}")
     with open(result_path, 'w', encoding='utf-8') as f:
         f.write(f"{sys.argv[2]}的查重率为：{result}%")
