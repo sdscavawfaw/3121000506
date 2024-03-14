@@ -33,7 +33,7 @@ def plot(word_count, n):
     plt.show()
 
 def main():
-    with open('./Test/orig.txt', 'r', encoding='utf-8') as f:
+    with open('../Test/orig.txt', 'r', encoding='utf-8') as f:
         data = f.read()
     text = re.sub(r'[\n\s\.,.，。、’“”:：;!！?？()（）"\'\-]', "", data)
     word_count = {}
@@ -45,9 +45,9 @@ def main():
             word_count[word] = 1
     word_count = sorted(word_count.items(), key=lambda x: x[1], reverse=True)
     print(word_count)
-    result_path = './data_analysis/word_frequency.txt'
+    result_path = 'word_frequency.txt'
     os.remove(result_path)
-    with open('./data_analysis/word_frequency.txt', 'a', encoding='utf-8') as f:
+    with open('word_frequency.txt', 'a', encoding='utf-8') as f:
         for word, num in word_count:
             f.write(f"{word}：{num}" + '\n')
     # 绘图
