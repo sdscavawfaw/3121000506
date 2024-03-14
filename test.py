@@ -121,7 +121,6 @@ class TestIntegration(unittest.TestCase):
             result = f.read()
         self.assertTrue(is_success(result))
 
-
 if __name__ == '__main__':
     unittest.main()
 
