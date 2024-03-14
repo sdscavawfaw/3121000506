@@ -96,6 +96,7 @@ class TestIntegration(unittest.TestCase):
             result = f.read()
         self.assertTrue(is_success(result))
 
+
         # 修改命令行参数
         sys.argv = ['main.py', self.file2_or.name, self.file2_pl.name, self.output_2.name]
         # 运行函数
