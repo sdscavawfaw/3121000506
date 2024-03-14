@@ -6,7 +6,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity  
 import re
 
-STOP_WORDS = ['的', '了']
+STOP_WORDS = ['我','的', '了']
 # 文本预处理函数  
 def preprocess_text(text):  
     text = delete_punct(text)
